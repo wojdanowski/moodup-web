@@ -1,8 +1,7 @@
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './styleThemes/custom.css';
+import './styleThemes/main.scss';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import NoMatch from './components/MainViews/NoMatch';
 import Home from './components/MainViews/Home';
 import Login from './containers/Login';
