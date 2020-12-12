@@ -1,4 +1,5 @@
 import React from 'react';
+// import { useHistory } from 'react-router-dom';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
@@ -23,7 +24,9 @@ const Styles = styled.div`
 	}
 `;
 
-function NavigationBar() {
+function NavigationBar(props) {
+	// const history = useHistory();
+
 	return (
 		<StyledContainer fluid>
 			<Container>
@@ -34,15 +37,29 @@ function NavigationBar() {
 						<Navbar.Collapse id='basic-navbar-nav'>
 							<Nav className='ml-auto'>
 								<Nav.Item>
-									<Nav.Link href='/home'>Home</Nav.Link>
+									<Nav.Link
+										onClick={() =>
+											props.history.push('/home')
+										}
+									>
+										Home
+									</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
-									<Nav.Link href='/createRecipe'>
+									<Nav.Link
+										onClick={(event) => {
+											props.history.push('/CreateRecipe');
+										}}
+									>
 										Create Recipe
 									</Nav.Link>
 								</Nav.Item>
 								<Nav.Item>
-									<Nav.Link href='/'>LogIn</Nav.Link>
+									<Nav.Link
+										onClick={() => props.history.push('/')}
+									>
+										LogIn
+									</Nav.Link>
 								</Nav.Item>
 							</Nav>
 						</Navbar.Collapse>
