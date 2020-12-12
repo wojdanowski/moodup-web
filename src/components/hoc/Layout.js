@@ -7,10 +7,10 @@ function Layout(props) {
 	const NavigationWithRouter = withRouter(NavigationBar);
 
 	return (
-		<Container>
+		<React.Fragment>
 			<NavigationWithRouter />
-			{props.children}
-		</Container>
+			<Container>{props.children}</Container>
+		</React.Fragment>
 	);
 }
 

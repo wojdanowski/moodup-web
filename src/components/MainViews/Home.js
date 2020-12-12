@@ -5,7 +5,7 @@ import Button from 'react-bootstrap/Button';
 function Home() {
 	return (
 		<React.Fragment>
-			<Button>some button</Button>
+			<Button variant='outline-secondary'>some button</Button>
 			<h1>home </h1>
 			<p>
 				Lorem ipsum dolor sit amet consectetur adipisicing elit. Est ad
