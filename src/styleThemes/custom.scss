@@ -1,6 +1,26 @@
 $theme-colors: (
 	'primary': #ffb800,
 	'secondary': #b55a00,
+	'basicWhite': white,
+	'basicGrey': rgb(161, 161, 161),
 );
+$border-radius: 0.5rem;
+
+.card-img-overlay.with-gradient:after {
+	content: '';
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	position: absolute;
+	background: rgb(0, 0, 0);
+	background: linear-gradient(
+		0deg,
+		rgba(0, 0, 0, 1) 0%,
+		rgba(0, 0, 0, 0) 40%,
+		rgba(0, 0, 0, 0) 100%
+	);
+	border-radius: $border-radius;
+}
 
 @import '~bootstrap/scss/bootstrap';
