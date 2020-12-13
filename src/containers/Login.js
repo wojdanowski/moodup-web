@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import LogInForm from './../components/LogInForm';
+import { connect } from 'react-redux';
 import axios from 'axios';
 import * as links from './../utils/links';
-import Layout from './../components/hoc/Layout';
-import { Switch, Route } from 'react-router-dom';
-import Home from './../components/MainViews/Home';
-import CreateRecipe from './../components/MainViews/CreateRecipe';
-import NoMatch from './../components/MainViews/NoMatch';
+import LogInForm from './../components/LogInForm';
+import * as authActions from './../store/actions/authActions';
 
-function Login() {
+function Login(props) {
 	let history = useHistory();
 	const [signingUp, setSigningUp] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-	const [errorMsg, setErrorMsg] = useState(null);
 	const [enteredEmail, setEnteredEmail] = useState(null);
 	const [enteredPassword, setEnteredPassword] = useState(null);
+	const [enteredConfirmPassword, setEnteredConfirmPassword] = useState(null);
 
 	const emailChangedHandler = (event) => {
 		setEnteredEmail(event.target.value);
@@ -25,47 +21,43 @@ function Login() {
 		setEnteredPassword(event.target.value);
 	};
 
-	// const logout = () => {
-	// 	alert('User logged out!');
-	// 	props.setUserData(null, null);
-	// };
-
-	// const checkAuthTimeout = (expirationTime) => {
-	// 	setTimeout(() => {
-	// 		logout();
-	// 	}, expirationTime * 1000);
-	// };
+	const passwordConfirmChangedHandler = (event) => {
+		setEnteredConfirmPassword(event.target.value);
+	};
 
 	const authFail = (err) => {
-		// setErrorMsg(err.data.error.message.split('_').join(' '));
 		alert(err);
-		setIsLoading(false);
+		props.setIsLoading(false);
 	};
 
 	const authSuccess = (res) => {
-		// setUserData(res.data.idToken, res.data.localId);
-		// checkAuthTimeout(res.data.expiresIn);
-		// const expirationDate = new Date(
-		// 	new Date().getTime() + res.data.expiresIn * 1000
-		// );
-		// localStorage.setItem('token', res.data.idToken);
-		// localStorage.setItem('expirationDate', expirationDate);
-		// localStorage.setItem('userId', res.data.localId);
-		setIsLoading(false);
+		props.setIsLoading(false);
+		const userId = res.data.data.user._id;
+		const token = res.data.token;
+		props.setUserData(token, userId);
 		history.push('/home');
 	};
 
 	const submitHandler = async (event) => {
 		event.preventDefault();
-		setIsLoading(true);
-		const body = {
+		props.setIsLoading(true);
+
+		let body = {
 			email: enteredEmail,
 			password: enteredPassword,
 		};
-		console.log(body);
+
+		if (signingUp) {
+			body = { ...body, passwordConfirm: enteredConfirmPassword };
+		}
 
 		axios
-			.post(`${links.apiUrl}/api/v1/users/login`, body)
+			.post(
+				`${links.apiUrl}/api/v1/users/${
+					signingUp ? 'signup' : 'login'
+				}`,
+				body
+			)
 			.then(function (response) {
 				authSuccess(response);
 			})
@@ -73,17 +65,34 @@ function Login() {
 				authFail(error);
 			});
 	};
+
 	return (
-		<React.Fragment>
-			<LogInForm
-				onEmailChanged={emailChangedHandler}
-				onPasswordChanged={passwordChangedHandler}
-				onFormSubmit={submitHandler}
-				loading={isLoading}
-				isSigningUp={signingUp}
-			/>
-		</React.Fragment>
+		<LogInForm
+			onEmailChanged={emailChangedHandler}
+			onPasswordChanged={passwordChangedHandler}
+			onConfirmPasswordChanged={passwordConfirmChangedHandler}
+			onFormSubmit={submitHandler}
+			loading={props.isLoading}
+			isSigningUp={signingUp}
+			onSigningUp={() => setSigningUp(!signingUp)}
+		/>
 	);
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+	return {
+		isLoading: state.authState.isLoading,
+		token: state.authState.token,
+	};
+};
+
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setIsLoading: (loading) =>
+			dispatch({ type: authActions.SET_AUTH_IS_LOADING, loading }),
+		setUserData: (token, userId) =>
+			dispatch({ type: authActions.SET_USER_DATA, token, userId }),
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
