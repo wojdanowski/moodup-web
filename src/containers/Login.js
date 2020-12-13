@@ -14,16 +14,9 @@ import * as authActions from './../store/actions/authActions';
 function Login(props) {
 	let history = useHistory();
 	const [signingUp, setSigningUp] = useState(false);
-	const [errorMsg, setErrorMsg] = useState(null);
 	const [enteredEmail, setEnteredEmail] = useState(null);
 	const [enteredPassword, setEnteredPassword] = useState(null);
 	const { token } = props;
-
-	// useEffect(() => {
-	// 	if (token) {
-	// 		history.push('/home');
-	// 	}
-	// }, [token]);
 
 	const emailChangedHandler = (event) => {
 		setEnteredEmail(event.target.value);
