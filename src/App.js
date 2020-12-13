@@ -24,23 +24,23 @@ function App(props) {
 	return (
 		<ThemeProvider theme={theme}>
 			<BrowserRouter>
-				{token && <Redirect to='/home' />}
+				{/* {token && <Redirect to='/home' />} */}
 				<Switch>
 					<Route path='/' exact component={Login} />
-					<Switch>
-						{props.token && (
-							<React.Fragment>
-								<Layout>
-									<Route path='/home' component={Home} />
-									<Route
-										path='/createRecipe'
-										component={CreateRecipe}
-									/>
-								</Layout>
-							</React.Fragment>
-						)}
-						<Route component={NoMatch} />
-					</Switch>
+
+					{props.token && (
+						<Layout>
+							<Switch>
+								<Route path='/home' component={Home} />
+								<Route
+									path='/createRecipe'
+									component={CreateRecipe}
+								/>
+								<Route component={NoMatch} />
+							</Switch>
+						</Layout>
+					)}
+					<Route component={NoMatch} />
 				</Switch>
 			</BrowserRouter>
 		</ThemeProvider>
