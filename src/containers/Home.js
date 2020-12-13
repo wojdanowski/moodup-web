@@ -1,7 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from 'react-bootstrap/Button';
+import Loader from './../components/uiElements/Loader';
+import axios from './../utils/axios';
+import { connect } from 'react-redux';
 
-function Home() {
+function Home(props) {
+	const [shouldFetch, setShouldFetch] = useState(true);
+	const [recipes, setRecipes] = useState(null);
+	const { token } = props;
+
+	const onSuccess = (res) => {
+		setRecipes(res.data.data.data);
+		console.log(res);
+	};
+
+	const onFail = (err) => {
+		alert(err);
+	};
+
+	useEffect(() => {
+		if (shouldFetch && token) {
+			axios
+				.get('/api/v1/recipes/', {
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				})
+				.then(function (response) {
+					onSuccess(response);
+				})
+				.catch(function (error) {
+					onFail(error);
+				});
+			setShouldFetch(false);
+		}
+	}, [shouldFetch, token]);
+
 	return (
 		<React.Fragment>
 			<Button variant='outline-primary'>some button</Button>
@@ -76,4 +110,10 @@ function Home() {
 	);
 }
 
-export default Home;
+const mapStateToProps = (state) => {
+	return {
+		token: state.authState.token,
+	};
+};
+
+export default connect(mapStateToProps, null)(Home);

@@ -4,13 +4,13 @@ import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import NoMatch from './components/MainViews/NoMatch';
-import Home from './components/MainViews/Home';
 import Login from './containers/Login';
 import CreateRecipe from './components/MainViews/CreateRecipe';
 import { theme } from './styleThemes/styleThemes';
 import { ThemeProvider } from 'styled-components';
 import Layout from './components/hoc/Layout';
 import * as authActions from './store/actions/authActions';
+import Home from './containers/Home';
 
 function App(props) {
 	const { loadAuthData } = props;
