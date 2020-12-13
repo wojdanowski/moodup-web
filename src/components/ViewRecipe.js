@@ -7,7 +7,7 @@ import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import axios from './../utils/axios';
 import Loader from './uiElements/Loader';
-import { useHistory, Redirect, useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import * as recipeActions from './../store/actions/recipeActions';
 
 const ViewRecipe = (props) => {
@@ -18,12 +18,12 @@ const ViewRecipe = (props) => {
 	const setFullRecipe = useCallback((recipe) => setRecipeDetails(recipe), [
 		setRecipeDetails,
 	]);
+
 	const recipeId = location.pathname.split('/viewRecipe/')[1];
 
-	let content = null;
 	useEffect(() => {
+		setIsLoading(true);
 		if (token) {
-			setIsLoading(true);
 			axios
 				.get(`/api/v1/recipes/${recipeId}`, {
 					headers: {
@@ -37,11 +37,12 @@ const ViewRecipe = (props) => {
 					setFullRecipe(null);
 					alert(error);
 				});
-			setIsLoading(false);
 		}
+		setIsLoading(false);
 	}, [token, selectedRecipe, setFullRecipe, recipeId]);
 
-	if (isLoading) {
+	let content;
+	if (isLoading || !selectedRecipe || !recipeDetails) {
 		content = (
 			<Container
 				fluid
@@ -50,7 +51,7 @@ const ViewRecipe = (props) => {
 				<Loader />
 			</Container>
 		);
-	} else if (!isLoading && recipeDetails) {
+	} else if (recipeDetails) {
 		content = (
 			<React.Fragment>
 				<Container fluid className='mt-4'>
@@ -104,6 +105,8 @@ const mapDispatchToProps = (dispatch) => {
 	return {
 		setRecipeDetails: (recipe) =>
 			dispatch({ type: recipeActions.SET_RECIPE_DETAILS, recipe }),
+		setRecipe: (recipe) =>
+			dispatch({ type: recipeActions.SET_SELECTED_RECIPE, recipe }),
 	};
 };
 

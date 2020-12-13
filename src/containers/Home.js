@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import Row from 'react-bootstrap/Row';
@@ -20,8 +20,20 @@ function Home(props) {
 	const [shouldFetch, setShouldFetch] = useState(true);
 	const [recipes, setRecipes] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
-	const { token } = props;
+	const { token, setRecipe, setRecipeDetails } = props;
 	const history = useHistory();
+
+	const setSelectedRecipe = useCallback((recipe) => setRecipe(recipe), [
+		setRecipe,
+	]);
+	const setRecDetails = useCallback((recipe) => setRecipeDetails(recipe), [
+		setRecipeDetails,
+	]);
+
+	useEffect(() => {
+		setSelectedRecipe(null);
+		setRecDetails(null);
+	}, [setSelectedRecipe, setRecDetails]);
 
 	const onSuccess = (res) => {
 		setRecipes(res.data.data.data);
@@ -34,7 +46,7 @@ function Home(props) {
 	};
 
 	const recipeClickedHandler = (recipe) => {
-		props.setRecipeId(recipe);
+		setSelectedRecipe(recipe);
 		history.push(`/viewRecipe/${recipe.id}`);
 	};
 
@@ -99,8 +111,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		setRecipeId: (recipe) =>
+		setRecipe: (recipe) =>
 			dispatch({ type: recipeActions.SET_SELECTED_RECIPE, recipe }),
+		setRecipeDetails: (recipe) =>
+			dispatch({ type: recipeActions.SET_RECIPE_DETAILS, recipe }),
 	};
 };
 
