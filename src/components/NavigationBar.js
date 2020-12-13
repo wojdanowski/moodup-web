@@ -3,6 +3,8 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import Container from 'react-bootstrap/Container';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
+import * as authActions from './../store/actions/authActions';
 
 const StyledContainer = styled(Container)`
 	background-color: ${(props) => props.theme.mainColor};
@@ -33,7 +35,10 @@ const Styles = styled.div`
 `;
 
 function NavigationBar(props) {
-	// const history = useHistory();
+	const logoutHandler = () => {
+		props.setUserData(null, null);
+		props.history.push('/');
+	};
 
 	return (
 		<React.Fragment>
@@ -66,12 +71,8 @@ function NavigationBar(props) {
 										</Nav.Link>
 									</Nav.Item>
 									<Nav.Item>
-										<Nav.Link
-											onClick={() =>
-												props.history.push('/')
-											}
-										>
-											LogIn
+										<Nav.Link onClick={logoutHandler}>
+											LogOut
 										</Nav.Link>
 									</Nav.Item>
 								</Nav>
@@ -84,4 +85,11 @@ function NavigationBar(props) {
 	);
 }
 
-export default NavigationBar;
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setUserData: (token, userId) =>
+			dispatch({ type: authActions.SET_USER_DATA, token, userId }),
+	};
+};
+
+export default connect(null, mapDispatchToProps)(NavigationBar);
