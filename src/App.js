@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import './styleThemes/main.scss';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import NoMatch from './components/MainViews/NoMatch';
@@ -18,13 +18,13 @@ function App(props) {
 	const { token } = props;
 
 	useEffect(() => {
-		console.log(`[App.js] load auth data`);
 		loadAuthData();
 	}, [loadAuthData, token]);
 
 	return (
 		<ThemeProvider theme={theme}>
 			<BrowserRouter>
+				{token && <Redirect to='/home' />}
 				<Switch>
 					<Route path='/' exact component={Login} />
 					<Switch>

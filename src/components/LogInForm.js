@@ -7,6 +7,17 @@ import Loader from './uiElements/Loader';
 function LogInForm(props) {
 	let form = (
 		<Form style={{ minWidth: '40vw' }} onSubmit={props.onFormSubmit}>
+			<Container
+				fluid
+				className='d-flex flex-row justify-content-between'
+			>
+				<h1 className='text-primary'>
+					{props.isSigningUp ? 'Sign in' : 'Login'}
+				</h1>
+				<Button variant='outline-primary' onClick={props.onSigningUp}>
+					{props.isSigningUp ? 'LogIn' : 'Sign in'}
+				</Button>
+			</Container>
 			<Form.Group controlId='formBasicEmail'>
 				<Form.Label>Email address</Form.Label>
 				<Form.Control
@@ -24,6 +35,18 @@ function LogInForm(props) {
 					onChange={(event) => props.onPasswordChanged(event)}
 				/>
 			</Form.Group>
+			{props.isSigningUp && (
+				<Form.Group controlId='formBasicPassword'>
+					<Form.Label>Confirm Password</Form.Label>
+					<Form.Control
+						type='password'
+						placeholder='Confirm Password'
+						onChange={(event) =>
+							props.onConfirmPasswordChanged(event)
+						}
+					/>
+				</Form.Group>
+			)}
 			<Button
 				className='w-100'
 				variant='primary'

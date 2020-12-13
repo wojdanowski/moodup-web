@@ -1,13 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import * as links from './../utils/links';
-import Layout from './../components/hoc/Layout';
-import { Switch, Route } from 'react-router-dom';
-import Home from './../components/MainViews/Home';
-import CreateRecipe from './../components/MainViews/CreateRecipe';
-import NoMatch from './../components/MainViews/NoMatch';
 import LogInForm from './../components/LogInForm';
 import * as authActions from './../store/actions/authActions';
 
@@ -16,7 +11,7 @@ function Login(props) {
 	const [signingUp, setSigningUp] = useState(false);
 	const [enteredEmail, setEnteredEmail] = useState(null);
 	const [enteredPassword, setEnteredPassword] = useState(null);
-	const { token } = props;
+	const [enteredConfirmPassword, setEnteredConfirmPassword] = useState(null);
 
 	const emailChangedHandler = (event) => {
 		setEnteredEmail(event.target.value);
@@ -26,29 +21,43 @@ function Login(props) {
 		setEnteredPassword(event.target.value);
 	};
 
+	const passwordConfirmChangedHandler = (event) => {
+		setEnteredConfirmPassword(event.target.value);
+	};
+
 	const authFail = (err) => {
 		alert(err);
 		props.setIsLoading(false);
 	};
 
 	const authSuccess = (res) => {
+		props.setIsLoading(false);
 		const userId = res.data.data.user._id;
 		const token = res.data.token;
 		props.setUserData(token, userId);
-		props.setIsLoading(false);
 		history.push('/home');
 	};
 
 	const submitHandler = async (event) => {
 		event.preventDefault();
 		props.setIsLoading(true);
-		const body = {
+
+		let body = {
 			email: enteredEmail,
 			password: enteredPassword,
 		};
 
+		if (signingUp) {
+			body = { ...body, passwordConfirm: enteredConfirmPassword };
+		}
+
 		axios
-			.post(`${links.apiUrl}/api/v1/users/login`, body)
+			.post(
+				`${links.apiUrl}/api/v1/users/${
+					signingUp ? 'signup' : 'login'
+				}`,
+				body
+			)
 			.then(function (response) {
 				authSuccess(response);
 			})
@@ -57,22 +66,17 @@ function Login(props) {
 			});
 	};
 
-	let content = null;
-	if (!token) {
-		content = (
-			<LogInForm
-				onEmailChanged={emailChangedHandler}
-				onPasswordChanged={passwordChangedHandler}
-				onFormSubmit={submitHandler}
-				loading={props.isLoading}
-				isSigningUp={signingUp}
-			/>
-		);
-	} else {
-		history.push('/home');
-	}
-
-	return content;
+	return (
+		<LogInForm
+			onEmailChanged={emailChangedHandler}
+			onPasswordChanged={passwordChangedHandler}
+			onConfirmPasswordChanged={passwordConfirmChangedHandler}
+			onFormSubmit={submitHandler}
+			loading={props.isLoading}
+			isSigningUp={signingUp}
+			onSigningUp={() => setSigningUp(!signingUp)}
+		/>
+	);
 }
 
 const mapStateToProps = (state) => {
