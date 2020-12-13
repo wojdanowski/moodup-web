@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
-import CardDeck from 'react-bootstrap/CardDeck';
+import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Loader from './../components/uiElements/Loader';
 import axios from './../utils/axios';
-import { connect } from 'react-redux';
-import foodImg from './../assets/img/food_tc.jpg';
 import styled from 'styled-components';
+import * as recipeActions from './../store/actions/recipeActions';
+import RecipeCard from './../components/RecipeCard';
 
 const Styles = styled.div`
 	&:hover h4 {
@@ -22,11 +21,11 @@ function Home(props) {
 	const [recipes, setRecipes] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
 	const { token } = props;
+	const history = useHistory();
 
 	const onSuccess = (res) => {
 		setRecipes(res.data.data.data);
 		setIsLoading(false);
-		console.log(res);
 	};
 
 	const onFail = (err) => {
@@ -34,8 +33,9 @@ function Home(props) {
 		alert(err);
 	};
 
-	const recipeClickedHandler = (recipeId) => {
-		console.log(recipeId);
+	const recipeClickedHandler = (recipe) => {
+		props.setRecipeId(recipe);
+		history.push(`/viewRecipe/${recipe.id}`);
 	};
 
 	useEffect(() => {
@@ -76,27 +76,9 @@ function Home(props) {
 						{recipes.map((recipe) => (
 							<Col key={recipe.id}>
 								<Styles
-									onClick={() =>
-										recipeClickedHandler(recipe.id)
-									}
+									onClick={() => recipeClickedHandler(recipe)}
 								>
-									<Card className='mb-3 border-0'>
-										<Card.Img
-											src={foodImg}
-											className='rounded '
-										/>
-										<Card.ImgOverlay className='with-gradient rounded'></Card.ImgOverlay>
-										<Card.ImgOverlay>
-											<Card.Body className='d-flex h-100 flex-column justify-content-end'>
-												<Card.Text className='text-basicGrey'>
-													{recipe.prepTime}
-												</Card.Text>
-												<Card.Title className='text-basicWhite'>
-													<h4>{recipe.name}</h4>
-												</Card.Title>
-											</Card.Body>
-										</Card.ImgOverlay>
-									</Card>
+									<RecipeCard recipe={recipe} />
 								</Styles>
 							</Col>
 						))}
@@ -115,4 +97,11 @@ const mapStateToProps = (state) => {
 	};
 };
 
-export default connect(mapStateToProps, null)(Home);
+const mapDispatchToProps = (dispatch) => {
+	return {
+		setRecipeId: (recipe) =>
+			dispatch({ type: recipeActions.SET_SELECTED_RECIPE, recipe }),
+	};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);

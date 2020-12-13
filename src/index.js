@@ -5,9 +5,11 @@ import { createStore, combineReducers } from 'redux';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import authReducer from './store/reducers/authReducer';
+import recipeReducer from './store/reducers/recipeReducer';
 
 const rootReducer = combineReducers({
 	authState: authReducer,
+	recipeState: recipeReducer,
 });
 
 const store = createStore(
