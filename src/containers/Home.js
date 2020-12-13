@@ -9,6 +9,13 @@ import Loader from './../components/uiElements/Loader';
 import axios from './../utils/axios';
 import { connect } from 'react-redux';
 import foodImg from './../assets/img/food_tc.jpg';
+import styled from 'styled-components';
+
+const Styles = styled.div`
+	&:hover h4 {
+		color: ${(props) => props.theme.mainColor};
+	}
+`;
 
 function Home(props) {
 	const [shouldFetch, setShouldFetch] = useState(true);
@@ -25,6 +32,10 @@ function Home(props) {
 	const onFail = (err) => {
 		setIsLoading(false);
 		alert(err);
+	};
+
+	const recipeClickedHandler = (recipeId) => {
+		console.log(recipeId);
 	};
 
 	useEffect(() => {
@@ -64,23 +75,29 @@ function Home(props) {
 					<Row xs={1} sm={1} md={3}>
 						{recipes.map((recipe) => (
 							<Col key={recipe.id}>
-								<Card className='mb-3 border-0'>
-									<Card.Img
-										src={foodImg}
-										className='rounded '
-									/>
-									<Card.ImgOverlay className='with-gradient rounded'></Card.ImgOverlay>
-									<Card.ImgOverlay>
-										<Card.Body className='d-flex h-100 flex-column justify-content-end'>
-											<Card.Text className='text-basicGrey'>
-												{recipe.prepTime}
-											</Card.Text>
-											<Card.Title className='text-basicWhite'>
-												{recipe.name}
-											</Card.Title>
-										</Card.Body>
-									</Card.ImgOverlay>
-								</Card>
+								<Styles
+									onClick={() =>
+										recipeClickedHandler(recipe.id)
+									}
+								>
+									<Card className='mb-3 border-0'>
+										<Card.Img
+											src={foodImg}
+											className='rounded '
+										/>
+										<Card.ImgOverlay className='with-gradient rounded'></Card.ImgOverlay>
+										<Card.ImgOverlay>
+											<Card.Body className='d-flex h-100 flex-column justify-content-end'>
+												<Card.Text className='text-basicGrey'>
+													{recipe.prepTime}
+												</Card.Text>
+												<Card.Title className='text-basicWhite'>
+													<h4>{recipe.name}</h4>
+												</Card.Title>
+											</Card.Body>
+										</Card.ImgOverlay>
+									</Card>
+								</Styles>
 							</Col>
 						))}
 					</Row>
