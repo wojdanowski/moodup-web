@@ -56,7 +56,7 @@ function NavigationBar(props) {
 												props.history.push('/home')
 											}
 										>
-											Home
+											All Recipes
 										</Nav.Link>
 									</Nav.Item>
 									<Nav.Item>
