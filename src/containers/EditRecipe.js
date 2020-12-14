@@ -112,27 +112,46 @@ const EditRecipe = (props) => {
 									controlId={`recipeForm.prepSteps${index}`}
 									key={index}
 								>
-									<Form.Control
-										style={{ resize: 'none' }}
-										as='textarea'
-										rows={3}
-										defaultValue={props.newRecipe.prepSteps}
-										// onChange={(event) =>
-										// 	props.setRecipeField(
-										// 		'prepSteps',
-										// 		event.target.value
-										// 	)
-										// }
-									/>
+									<span className='d-flex flex-row'>
+										<Form.Control
+											style={{ resize: 'none' }}
+											as='textarea'
+											rows={3}
+											defaultValue={step}
+											onChange={(event) =>
+												props.setRecipeField(
+													'prepSteps',
+													event.target.value,
+													index
+												)
+											}
+										/>
+										<Button
+											className='ml-2'
+											variant='outline-danger'
+											onClick={() =>
+												props.remItem(
+													'prepSteps',
+													index
+												)
+											}
+										>
+											Remove
+										</Button>
+									</span>
 								</Form.Group>
 							))}
-							<Button className='ml-2' variant='outline-primary'>
+							<Button
+								className='ml-2'
+								variant='outline-primary'
+								onClick={() => props.addItem('prepSteps')}
+							>
 								Add
 							</Button>
 						</Form>
 					</Col>
 
-					<Col>
+					{/* <Col>
 						<Container fluid className='d-flex justify-content-end'>
 							<Button className='ml-2' variant='outline-success'>
 								Save
@@ -152,7 +171,7 @@ const EditRecipe = (props) => {
 								)
 							)}
 						</Row>
-					</Col>
+					</Col> */}
 				</Row>
 			</Container>
 		</React.Fragment>
@@ -180,11 +199,23 @@ const mapDispatchToProps = (dispatch) => {
 				type: recipeActions.SET_IS_RECIPE_EDITION,
 				isEdit,
 			}),
-		setRecipeField: (field, value) =>
+		setRecipeField: (field, value, index = null) =>
 			dispatch({
 				type: recipeActions.SET_NEW_RECIPE_FIELD,
 				field,
 				value,
+				index,
+			}),
+		remItem: (field, index) =>
+			dispatch({
+				type: recipeActions.REMOVE_ITEM,
+				field,
+				index,
+			}),
+		addItem: (field) =>
+			dispatch({
+				type: recipeActions.ADD_ITEM,
+				field,
 			}),
 	};
 };
