@@ -9,49 +9,14 @@ import axios from './../utils/axios';
 import Loader from './../components/uiElements/Loader';
 import { useLocation, useHistory } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
+import RecipeFormGroup from './../components/uiElements/RecipeFormGroup';
 
 const EditRecipe = (props) => {
 	const location = useLocation();
 	const history = useHistory();
 	const recipeId = location.pathname.split('/viewRecipe/')[1];
 
-	// let recipeContent = props.shouldEditRecipe
-	// 	? props.recipeDetails
-	//     : props.newRecipe;
-
-	// let recipeContent = props.shouldEditRecipe
-	// 	? props.recipeDetails
-	// 	: {
-	// 			recipeName: '',
-	// 			shortDescription: '',
-	// 			prepTime: '',
-	// 			ingredients: [],
-	// 			author: '',
-	// 	  };
-
-	// const onChangeFormHandler = (formField) => {
-	// 	console.log(formField);
-	// };
-
 	return (
-		// <React.Fragment>
-		// 	<Container fluid className='mt-4'>
-		// <h4>{props.shouldEditRecipe ? 'Edit Recipe' : 'New Recipe'}</h4>
-		// <Form>
-		// 	<Form.Group controlId='recipeForm.Name'>
-		// 		<Form.Label>Name:</Form.Label>
-		// 		<Form.Control
-		// 			type='text'
-		// 			defaultValue={props.newRecipe.name}
-		// 			onChange={(event) =>
-		// 				props.setRecipeField('name', event.target.value)
-		// 			}
-		// 		/>
-		// 	</Form.Group>
-		// </Form>
-
-		// 	</Container>
-		// </React.Fragment>
 		<React.Fragment>
 			<Container fluid className='mt-4'>
 				<Row xs={1} sm={1} md={1} lg={2}>
@@ -62,84 +27,62 @@ const EditRecipe = (props) => {
 								: 'New Recipe'}
 						</h4>
 						<Form>
-							<Form.Group controlId='recipeForm.name'>
-								<Form.Label>Name:</Form.Label>
-								<Form.Control
-									type='text'
-									defaultValue={props.newRecipe.name}
-									onChange={(event) =>
-										props.setRecipeField(
-											'name',
-											event.target.value
-										)
-									}
-								/>
-							</Form.Group>
-
-							<Form.Group controlId='recipeForm.shortDescription'>
-								<Form.Label>Description:</Form.Label>
-								<Form.Control
-									type='text'
-									defaultValue={
-										props.newRecipe.shortDescription
-									}
-									onChange={(event) =>
-										props.setRecipeField(
-											'shortDescription',
-											event.target.value
-										)
-									}
-								/>
-							</Form.Group>
-
-							<Form.Group controlId='recipeForm.prepTime'>
-								<Form.Label>Preparation Time:</Form.Label>
-								<Form.Control
-									type='text'
-									defaultValue={props.newRecipe.prepTime}
-									onChange={(event) =>
-										props.setRecipeField(
-											'prepTime',
-											event.target.value
-										)
-									}
-								/>
-							</Form.Group>
+							<RecipeFormGroup
+								groupName={'name'}
+								label={'Name:'}
+								formType={'text'}
+								initialValue={props.newRecipe.name}
+								changeHandler={(event) =>
+									props.setRecipeField(
+										'name',
+										event.target.value
+									)
+								}
+							/>
+							<RecipeFormGroup
+								groupName={'shortDescription'}
+								label={'Description:'}
+								formType={'textArea'}
+								initialValue={props.newRecipe.shortDescription}
+								changeHandler={(event) =>
+									props.setRecipeField(
+										'shortDescription',
+										event.target.value
+									)
+								}
+							/>
+							<RecipeFormGroup
+								groupName={'prepTime'}
+								label={'Preparation Time:'}
+								formType={'text'}
+								initialValue={props.newRecipe.prepTime}
+								changeHandler={(event) =>
+									props.setRecipeField(
+										'prepTime',
+										event.target.value
+									)
+								}
+							/>
 
 							<Form.Label>Preparation Steps:</Form.Label>
 							{props.newRecipe.prepSteps.map((step, index) => (
-								<Form.Group
-									controlId={`recipeForm.prepSteps${index}`}
+								<RecipeFormGroup
 									key={index}
-								>
-									<span className='d-flex flex-row'>
-										<Form.Control
-											style={{ resize: 'none' }}
-											as='textarea'
-											rows={3}
-											defaultValue={step}
-											onChange={(event) =>
-												props.setRecipeField(
-													'prepSteps',
-													event.target.value,
-													index
-												)
-											}
-										/>
-										<Button
-											className='ml-2'
-											variant='outline-danger'
-											onClick={() =>
-												props.remItem(
-													'prepSteps',
-													index
-												)
-											}
-										>
-											Remove
-										</Button>
-									</span>
-								</Form.Group>
+									buttonHandler={() =>
+										props.remItem('prepSteps', index)
+									}
+									groupName={'prepSteps'}
+									label={false}
+									formType={'textarea'}
+									initialValue={step}
+									changeHandler={(event) =>
+										props.setRecipeField(
+											'prepSteps',
+											event.target.value,
+											index
+										)
+									}
+								/>
 							))}
 							<Button
 								className='ml-2'
