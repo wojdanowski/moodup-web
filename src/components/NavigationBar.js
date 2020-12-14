@@ -5,6 +5,7 @@ import Container from 'react-bootstrap/Container';
 import styled from 'styled-components';
 import { connect } from 'react-redux';
 import * as authActions from './../store/actions/authActions';
+import * as recipeActions from './../store/actions/recipeActions';
 
 const StyledContainer = styled(Container)`
 	background-color: ${(props) => props.theme.mainColor};
@@ -63,7 +64,10 @@ function NavigationBar(props) {
 										<Nav.Link
 											onClick={(event) => {
 												props.history.push(
-													'/CreateRecipe'
+													'/editRecipe'
+												);
+												props.setShouldEditRecipe(
+													false
 												);
 											}}
 										>
@@ -89,6 +93,11 @@ const mapDispatchToProps = (dispatch) => {
 	return {
 		setUserData: (token, userId) =>
 			dispatch({ type: authActions.SET_USER_DATA, token, userId }),
+		setShouldEditRecipe: (isEdit) =>
+			dispatch({
+				type: recipeActions.SET_IS_RECIPE_EDITION,
+				isEdit,
+			}),
 	};
 };
 

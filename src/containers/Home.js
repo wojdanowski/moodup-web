@@ -23,17 +23,7 @@ function Home(props) {
 	const { token, setRecipe, setRecipeDetails } = props;
 	const history = useHistory();
 
-	const setSelectedRecipe = useCallback((recipe) => setRecipe(recipe), [
-		setRecipe,
-	]);
-	const setRecDetails = useCallback((recipe) => setRecipeDetails(recipe), [
-		setRecipeDetails,
-	]);
-
-	useEffect(() => {
-		setSelectedRecipe(null);
-		setRecDetails(null);
-	}, [setSelectedRecipe, setRecDetails]);
+	const setSelectedRecipe = useCallback((recipe) => setRecipe(recipe), [setRecipe]);
 
 	const onSuccess = (res) => {
 		setRecipes(res.data.data.data);
@@ -72,10 +62,7 @@ function Home(props) {
 	let content;
 	if (isLoading && !recipes) {
 		content = (
-			<Container
-				fluid
-				className='d-flex min-vh-100 justify-content-center align-items-center'
-			>
+			<Container fluid className='d-flex min-vh-100 justify-content-center align-items-center'>
 				<Loader />
 			</Container>
 		);
@@ -87,9 +74,7 @@ function Home(props) {
 					<Row xs={1} sm={1} md={3}>
 						{recipes.map((recipe) => (
 							<Col key={recipe.id}>
-								<Styles
-									onClick={() => recipeClickedHandler(recipe)}
-								>
+								<Styles onClick={() => recipeClickedHandler(recipe)}>
 									<RecipeCard recipe={recipe} />
 								</Styles>
 							</Col>
@@ -111,10 +96,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		setRecipe: (recipe) =>
-			dispatch({ type: recipeActions.SET_SELECTED_RECIPE, recipe }),
-		setRecipeDetails: (recipe) =>
-			dispatch({ type: recipeActions.SET_RECIPE_DETAILS, recipe }),
+		setRecipe: (recipe) => dispatch({ type: recipeActions.SET_SELECTED_RECIPE, recipe }),
+		setRecipeDetails: (recipe) => dispatch({ type: recipeActions.SET_RECIPE_DETAILS, recipe }),
 	};
 };
 

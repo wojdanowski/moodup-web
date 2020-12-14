@@ -3,6 +3,14 @@ import * as actionTypes from './../actions/recipeActions';
 const initialState = {
 	selectedRecipe: null,
 	recipeDetails: null,
+	shouldEditRecipe: false,
+	newRecipe: {
+		name: '',
+		shortDescription: '',
+		prepTime: '',
+		ingredients: [],
+		prepSteps: [],
+	},
 };
 
 const authReducer = (state = initialState, action) => {
@@ -14,54 +22,112 @@ const authReducer = (state = initialState, action) => {
 			};
 		}
 		case actionTypes.SET_RECIPE_DETAILS: {
-			if (action.recipe) {
-			} else {
-				localStorage.removeItem('selectedRecipe');
-			}
 			return {
 				...state,
 				recipeDetails: action.recipe,
 			};
 		}
-		// case actionTypes.SET_USER_DATA: {
-		// 	if (!action.token || !action.userId) {
-		// 		localStorage.removeItem('token');
-		// 		localStorage.removeItem('userId');
-		// 	} else {
-		// 		localStorage.setItem('token', action.token);
-		// 		localStorage.setItem('userId', action.userId);
-		// 	}
+		case actionTypes.SET_IS_RECIPE_EDITION: {
+			const copiedRecipe = action.isEdit
+				? {
+						newRecipe: {
+							...state.recipeDetails,
+							ingredients: [...state.recipeDetails.ingredients],
+							prepSteps: [...state.recipeDetails.prepSteps],
+						},
+				  }
+				: {
+						newRecipe: {
+							...initialState.newRecipe,
+							ingredients: [],
+							prepSteps: [],
+						},
+				  };
+			return {
+				...state,
+				shouldEditRecipe: action.isEdit,
+				...copiedRecipe,
+			};
+		}
+		case actionTypes.SET_NEW_RECIPE_FIELD: {
+			if (
+				action.field !== 'prepSteps' &&
+				action.field !== 'ingredients'
+			) {
+				return {
+					...state,
+					newRecipe: {
+						...state.newRecipe,
+						[action.field]: action.value,
+					},
+				};
+			} else {
+				const fieldArray = [...state.newRecipe[action.field]];
+				if (action.field === 'ingredients') {
+					fieldArray[action.index] = {
+						...fieldArray[action.index],
+						...action.value,
+					};
+				} else {
+					fieldArray[action.index] = action.value;
+				}
 
-		// 	return {
-		// 		...state,
-		// 		userId: action.userId,
-		// 		token: action.token,
-		// 	};
-		// }
-		// case actionTypes.LOAD_USER_DATA_FROM_STORAGE: {
-		// 	const tokenInStorage = localStorage.getItem('token');
+				return {
+					...state,
+					newRecipe: {
+						...state.newRecipe,
+						[action.field]: [...fieldArray],
+					},
+				};
+			}
+		}
+		case actionTypes.REMOVE_ITEM: {
+			console.log(`rem item`);
+			if (
+				action.field !== 'prepSteps' &&
+				action.field !== 'ingredients'
+			) {
+				return {
+					...state,
+				};
+			}
 
-		// 	const userIdInStorage = localStorage.getItem('userId');
-		// 	let newState = {
-		// 		...state,
-		// 	};
-		// 	if (tokenInStorage && userIdInStorage) {
-		// 		newState = {
-		// 			...state,
-		// 			token: tokenInStorage,
-		// 			userId: userIdInStorage,
-		// 		};
-		// 	} else
-		// 		newState = {
-		// 			...state,
-		// 			token: null,
-		// 			userId: null,
-		// 		};
+			const fieldArray = [...state.newRecipe[action.field]];
+			fieldArray.splice(action.index, 1);
 
-		// 	return {
-		// 		...newState,
-		// 	};
-		// }
+			return {
+				...state,
+				newRecipe: {
+					...state.newRecipe,
+					[action.field]: [...fieldArray],
+				},
+			};
+		}
+		case actionTypes.ADD_ITEM: {
+			let entry;
+			if (
+				action.field !== 'prepSteps' &&
+				action.field !== 'ingredients'
+			) {
+				return {
+					...state,
+				};
+			} else if (action.field === 'ingredients') {
+				entry = { name: '', quantity: '' };
+			}
+
+			const fieldArray = [...state.newRecipe[action.field]];
+			fieldArray.push(entry);
+
+			return {
+				...state,
+				newRecipe: {
+					...state.newRecipe,
+					[action.field]: [...fieldArray],
+				},
+			};
+		}
+
 		default:
 			return state;
 	}
