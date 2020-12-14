@@ -63,7 +63,14 @@ const authReducer = (state = initialState, action) => {
 				};
 			} else {
 				const fieldArray = [...state.newRecipe[action.field]];
-				fieldArray[action.index] = action.value;
+				if (action.field === 'ingredients') {
+					fieldArray[action.index] = {
+						...fieldArray[action.index],
+						...action.value,
+					};
+				} else {
+					fieldArray[action.index] = action.value;
+				}
 
 				return {
 					...state,
@@ -97,7 +104,7 @@ const authReducer = (state = initialState, action) => {
 			};
 		}
 		case actionTypes.ADD_ITEM: {
-			console.log(`rem item`);
+			let entry;
 			if (
 				action.field !== 'prepSteps' &&
 				action.field !== 'ingredients'
@@ -105,10 +112,12 @@ const authReducer = (state = initialState, action) => {
 				return {
 					...state,
 				};
+			} else if (action.field === 'ingredients') {
+				entry = { name: '', quantity: '' };
 			}
 
 			const fieldArray = [...state.newRecipe[action.field]];
-			fieldArray.push('');
+			fieldArray.push(entry);
 
 			return {
 				...state,

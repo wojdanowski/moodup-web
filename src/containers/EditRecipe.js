@@ -25,7 +25,11 @@ const EditRecipe = (props) => {
 	}, [recipeId, setShouldEditRecipe]);
 
 	const saveHandler = () => {
-		console.log(props.newRecipe);
+		const filteredPrepSteps = props.newRecipe.prepSteps.filter((el) => el);
+		const filteredIngredients = props.newRecipe.ingredients.filter(
+			(el) => el.name || el.quantity
+		);
+
 		axios({
 			method: `${recipeId ? 'patch' : 'post'}`,
 			url: `/api/v1/recipes/${recipeId ? recipeId : ''}`,
@@ -34,21 +38,10 @@ const EditRecipe = (props) => {
 			},
 			data: {
 				...props.newRecipe,
+				prepSteps: [...filteredPrepSteps],
+				ingredients: [...filteredIngredients],
 			},
 		});
-
-		// axios
-		// 	.get(`/api/v1/recipes/${recipeId ? recipeId : ''}`, {
-		// 		headers: {
-		// 			Authorization: `Bearer ${props.token}`,
-		// 		},
-		// 	})
-		// 	.then(function (response) {
-		// 		console.log(response);
-		// 	})
-		// 	.catch(function (error) {
-		// 		console.log(error);
-		// 	});
 	};
 
 	const deleteHandler = () => {
@@ -93,7 +86,7 @@ const EditRecipe = (props) => {
 								groupName={'name'}
 								label={'Name:'}
 								formType={'text'}
-								value={props.newRecipe.name}
+								initialValue={props.newRecipe.name}
 								changeHandler={(event) =>
 									props.setRecipeField(
 										'name',
@@ -105,7 +98,7 @@ const EditRecipe = (props) => {
 								groupName={'shortDescription'}
 								label={'Description:'}
 								formType={'textArea'}
-								value={props.newRecipe.shortDescription}
+								initialValue={props.newRecipe.shortDescription}
 								changeHandler={(event) =>
 									props.setRecipeField(
 										'shortDescription',
@@ -117,7 +110,7 @@ const EditRecipe = (props) => {
 								groupName={'prepTime'}
 								label={'Preparation Time:'}
 								formType={'text'}
-								value={props.newRecipe.prepTime}
+								initialValue={props.newRecipe.prepTime}
 								changeHandler={(event) =>
 									props.setRecipeField(
 										'prepTime',
@@ -136,7 +129,7 @@ const EditRecipe = (props) => {
 									groupName={'prepSteps'}
 									label={false}
 									formType={'textarea'}
-									value={step}
+									initialValue={step}
 									changeHandler={(event) =>
 										props.setRecipeField(
 											'prepSteps',
@@ -186,11 +179,22 @@ const EditRecipe = (props) => {
 														>
 															<Form.Control
 																type='text'
-																defaultValue={
+																value={
 																	ingredient.quantity
 																}
-																onChange={
-																	props.changeHandler
+																onChange={(
+																	event
+																) =>
+																	props.setRecipeField(
+																		'ingredients',
+																		{
+																			quantity:
+																				event
+																					.target
+																					.value,
+																		},
+																		index
+																	)
 																}
 															/>
 														</Col>
@@ -198,11 +202,22 @@ const EditRecipe = (props) => {
 															<Form.Control
 																className='ml-1'
 																type='text'
-																defaultValue={
+																value={
 																	ingredient.name
 																}
-																onChange={
-																	props.changeHandler
+																onChange={(
+																	event
+																) =>
+																	props.setRecipeField(
+																		'ingredients',
+																		{
+																			name:
+																				event
+																					.target
+																					.value,
+																		},
+																		index
+																	)
 																}
 															/>
 														</Col>
