@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import * as recipeActions from './../store/actions/recipeActions';
 import Button from 'react-bootstrap/Button';
@@ -15,6 +15,7 @@ const EditRecipe = (props) => {
 	const location = useLocation();
 	const history = useHistory();
 	const recipeId = location.pathname.split('/editRecipe/')[1];
+	const [isLoading, setIsLoading] = useState(false);
 
 	const { setShouldEditRecipe } = props;
 
@@ -24,12 +25,21 @@ const EditRecipe = (props) => {
 		}
 	}, [recipeId, setShouldEditRecipe]);
 
-	const saveHandler = () => {
-		const filteredPrepSteps = props.newRecipe.prepSteps.filter((el) => el);
-		const filteredIngredients = props.newRecipe.ingredients.filter(
-			(el) => el.name || el.quantity
-		);
+	const onFail = (error) => {
+		alert('Error');
+		console.log(error);
+		setIsLoading(false);
+	};
+	const onSuccess = () => {
+		alert('Success');
+		setIsLoading(false);
+		history.push('/home');
+	};
 
+	const saveHandler = () => {
+		setIsLoading(true);
+		const filteredPrepSteps = props.newRecipe.prepSteps.filter((el) => el);
+		const filteredIngredients = props.newRecipe.ingredients.filter((el) => el.name);
 		axios({
 			method: `${recipeId ? 'patch' : 'post'}`,
 			url: `/api/v1/recipes/${recipeId ? recipeId : ''}`,
@@ -41,101 +51,89 @@ const EditRecipe = (props) => {
 				prepSteps: [...filteredPrepSteps],
 				ingredients: [...filteredIngredients],
 			},
-		});
+		})
+			.then(function (response) {
+				onSuccess();
+			})
+			.catch(function (error) {
+				onFail();
+			});
 	};
 
 	const deleteHandler = () => {
-		console.log(`delete`);
+		setIsLoading(true);
+		axios({
+			method: 'delete',
+			url: `/api/v1/recipes/${props.selectedRecipe.id}`,
+			headers: {
+				Authorization: `Bearer ${props.token}`,
+			},
+		})
+			.then(function (response) {
+				onSuccess();
+			})
+			.catch(function (error) {
+				onFail();
+			});
 	};
 
-	return (
+	const content = isLoading ? (
+		<Container fluid className='d-flex min-vh-100 justify-content-center align-items-center'>
+			<Loader />
+		</Container>
+	) : (
 		<React.Fragment>
 			<Container fluid className='mt-4'>
 				<Container className='d-flex justify-content-end'>
-					<Button
-						className='ml-2'
-						variant='outline-primary'
-						onClick={() => history.push('/home')}
-					>
+					<Button className='ml-2' variant='outline-primary' onClick={() => history.push('/home')}>
 						Cancel
 					</Button>
-					<Button
-						className='ml-2'
-						variant='outline-success'
-						onClick={saveHandler}
-					>
+					<Button className='ml-2' variant='outline-success' onClick={saveHandler}>
 						Save
 					</Button>
-					<Button
-						className='ml-2'
-						variant='danger'
-						onClick={deleteHandler}
-					>
-						Delete
-					</Button>
+					{props.shouldEditRecipe && (
+						<Button className='ml-2' variant='danger' onClick={deleteHandler}>
+							Delete
+						</Button>
+					)}
 				</Container>
 				<Row xs={1} sm={1} md={1} lg={2}>
 					<Col lg={6}>
-						<h4>
-							{props.shouldEditRecipe
-								? 'Edit Recipe'
-								: 'New Recipe'}
-						</h4>
+						<h4>{props.shouldEditRecipe ? 'Edit Recipe' : 'New Recipe'}</h4>
 						<Form>
 							<RecipeFormGroup
 								groupName={'name'}
 								label={'Name:'}
 								formType={'text'}
 								initialValue={props.newRecipe.name}
-								changeHandler={(event) =>
-									props.setRecipeField(
-										'name',
-										event.target.value
-									)
-								}
+								changeHandler={(event) => props.setRecipeField('name', event.target.value)}
 							/>
 							<RecipeFormGroup
 								groupName={'shortDescription'}
 								label={'Description:'}
 								formType={'textArea'}
 								initialValue={props.newRecipe.shortDescription}
-								changeHandler={(event) =>
-									props.setRecipeField(
-										'shortDescription',
-										event.target.value
-									)
-								}
+								changeHandler={(event) => props.setRecipeField('shortDescription', event.target.value)}
 							/>
 							<RecipeFormGroup
 								groupName={'prepTime'}
 								label={'Preparation Time:'}
 								formType={'text'}
 								initialValue={props.newRecipe.prepTime}
-								changeHandler={(event) =>
-									props.setRecipeField(
-										'prepTime',
-										event.target.value
-									)
-								}
+								changeHandler={(event) => props.setRecipeField('prepTime', event.target.value)}
 							/>
 
 							<Form.Label>Preparation Steps:</Form.Label>
 							{props.newRecipe.prepSteps.map((step, index) => (
 								<RecipeFormGroup
 									key={index}
-									buttonHandler={() =>
-										props.remItem('prepSteps', index)
-									}
+									buttonHandler={() => props.remItem('prepSteps', index)}
 									groupName={'prepSteps'}
 									label={false}
 									formType={'textarea'}
 									initialValue={step}
 									changeHandler={(event) =>
-										props.setRecipeField(
-											'prepSteps',
-											event.target.value,
-											index
-										)
+										props.setRecipeField('prepSteps', event.target.value, index)
 									}
 								/>
 							))}
@@ -154,9 +152,7 @@ const EditRecipe = (props) => {
 							<h4 className='my-3'>Ingredients</h4>
 
 							<Form>
-								<Form.Group
-									controlId={`ingredientForm.quantity`}
-								>
+								<Form.Group controlId={`ingredientForm.quantity`}>
 									<Row className='mb-2'>
 										<Col lg='3' md='3' sm='2' xs='3'>
 											Quantity:
@@ -165,82 +161,53 @@ const EditRecipe = (props) => {
 											Name:
 										</Col>
 									</Row>
-									{props.newRecipe.ingredients.map(
-										(ingredient, index) => (
-											<React.Fragment key={index}>
-												<Row>
-													<span className='d-flex flex-row mb-1'>
-														<Col
-															className='px-1'
-															lg='3'
-															md='3'
-															sm='2'
-															xs='3'
+									{props.newRecipe.ingredients.map((ingredient, index) => (
+										<React.Fragment key={index}>
+											<Row>
+												<span className='d-flex flex-row mb-1'>
+													<Col className='px-1' lg='3' md='3' sm='2' xs='3'>
+														<Form.Control
+															type='text'
+															value={ingredient.quantity}
+															onChange={(event) =>
+																props.setRecipeField(
+																	'ingredients',
+																	{
+																		quantity: event.target.value,
+																	},
+																	index
+																)
+															}
+														/>
+													</Col>
+													<Col>
+														<Form.Control
+															className='ml-1'
+															type='text'
+															value={ingredient.name}
+															onChange={(event) =>
+																props.setRecipeField(
+																	'ingredients',
+																	{
+																		name: event.target.value,
+																	},
+																	index
+																)
+															}
+														/>
+													</Col>
+													<Col>
+														<Button
+															variant='outline-danger'
+															onClick={(event) => props.remItem('ingredients', index)}
 														>
-															<Form.Control
-																type='text'
-																value={
-																	ingredient.quantity
-																}
-																onChange={(
-																	event
-																) =>
-																	props.setRecipeField(
-																		'ingredients',
-																		{
-																			quantity:
-																				event
-																					.target
-																					.value,
-																		},
-																		index
-																	)
-																}
-															/>
-														</Col>
-														<Col>
-															<Form.Control
-																className='ml-1'
-																type='text'
-																value={
-																	ingredient.name
-																}
-																onChange={(
-																	event
-																) =>
-																	props.setRecipeField(
-																		'ingredients',
-																		{
-																			name:
-																				event
-																					.target
-																					.value,
-																		},
-																		index
-																	)
-																}
-															/>
-														</Col>
-														<Col>
-															<Button
-																variant='outline-danger'
-																onClick={(
-																	event
-																) =>
-																	props.remItem(
-																		'ingredients',
-																		index
-																	)
-																}
-															>
-																Remove
-															</Button>
-														</Col>
-													</span>
-												</Row>
-											</React.Fragment>
-										)
-									)}
+															Remove
+														</Button>
+													</Col>
+												</span>
+											</Row>
+										</React.Fragment>
+									))}
 								</Form.Group>
 								<Button
 									className='ml-2'
@@ -256,6 +223,8 @@ const EditRecipe = (props) => {
 			</Container>
 		</React.Fragment>
 	);
+
+	return content;
 };
 
 const mapStateToProps = (state) => {
@@ -263,6 +232,7 @@ const mapStateToProps = (state) => {
 		newRecipe: state.recipeState.newRecipe,
 		token: state.authState.token,
 		shouldEditRecipe: state.recipeState.shouldEditRecipe,
+		selectedRecipe: state.recipeState.selectedRecipe,
 	};
 };
 
