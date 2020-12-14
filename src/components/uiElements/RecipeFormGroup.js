@@ -13,7 +13,7 @@ const RecipeFormGroup = (props) => {
 			{props.formType === 'text' ? (
 				<Form.Control
 					type='text'
-					defaultValue={props.initialValue}
+					value={props.initialValue}
 					onChange={props.changeHandler}
 				/>
 			) : (
@@ -22,7 +22,7 @@ const RecipeFormGroup = (props) => {
 						style={{ resize: 'none' }}
 						as='textarea'
 						rows={3}
-						defaultValue={props.initialValue}
+						value={props.initialValue}
 						onChange={props.changeHandler}
 					/>
 					{props.buttonHandler && (

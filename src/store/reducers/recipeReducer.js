@@ -5,11 +5,11 @@ const initialState = {
 	recipeDetails: null,
 	shouldEditRecipe: false,
 	newRecipe: {
-		recipeName: '',
+		name: '',
 		shortDescription: '',
 		prepTime: '',
 		ingredients: [],
-		author: '',
+		prepSteps: [],
 	},
 };
 
@@ -28,14 +28,25 @@ const authReducer = (state = initialState, action) => {
 			};
 		}
 		case actionTypes.SET_IS_RECIPE_EDITION: {
+			const copiedRecipe = action.isEdit
+				? {
+						newRecipe: {
+							...state.recipeDetails,
+							ingredients: [...state.recipeDetails.ingredients],
+							prepSteps: [...state.recipeDetails.prepSteps],
+						},
+				  }
+				: {
+						newRecipe: {
+							...initialState.newRecipe,
+							ingredients: [],
+							prepSteps: [],
+						},
+				  };
 			return {
 				...state,
 				shouldEditRecipe: action.isEdit,
-				newRecipe: {
-					...state.recipeDetails,
-					ingredients: [...state.recipeDetails.ingredients],
-					prepSteps: [...state.recipeDetails.prepSteps],
-				},
+				...copiedRecipe,
 			};
 		}
 		case actionTypes.SET_NEW_RECIPE_FIELD: {

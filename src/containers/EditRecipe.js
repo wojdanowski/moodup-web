@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import * as recipeActions from './../store/actions/recipeActions';
 import Button from 'react-bootstrap/Button';
@@ -14,7 +14,46 @@ import RecipeFormGroup from './../components/uiElements/RecipeFormGroup';
 const EditRecipe = (props) => {
 	const location = useLocation();
 	const history = useHistory();
-	const recipeId = location.pathname.split('/viewRecipe/')[1];
+	const recipeId = location.pathname.split('/editRecipe/')[1];
+
+	const { setShouldEditRecipe } = props;
+
+	useEffect(() => {
+		if (!recipeId) {
+			setShouldEditRecipe(false);
+		}
+	}, [recipeId, setShouldEditRecipe]);
+
+	const saveHandler = () => {
+		console.log(props.newRecipe);
+		axios({
+			method: `${recipeId ? 'patch' : 'post'}`,
+			url: `/api/v1/recipes/${recipeId ? recipeId : ''}`,
+			headers: {
+				Authorization: `Bearer ${props.token}`,
+			},
+			data: {
+				...props.newRecipe,
+			},
+		});
+
+		// axios
+		// 	.get(`/api/v1/recipes/${recipeId ? recipeId : ''}`, {
+		// 		headers: {
+		// 			Authorization: `Bearer ${props.token}`,
+		// 		},
+		// 	})
+		// 	.then(function (response) {
+		// 		console.log(response);
+		// 	})
+		// 	.catch(function (error) {
+		// 		console.log(error);
+		// 	});
+	};
+
+	const deleteHandler = () => {
+		console.log(`delete`);
+	};
 
 	return (
 		<React.Fragment>
@@ -23,14 +62,22 @@ const EditRecipe = (props) => {
 					<Button
 						className='ml-2'
 						variant='outline-primary'
-						onClick={() => history.goBack()}
+						onClick={() => history.push('/home')}
 					>
-						Go Back
+						Cancel
 					</Button>
-					<Button className='ml-2' variant='outline-success'>
+					<Button
+						className='ml-2'
+						variant='outline-success'
+						onClick={saveHandler}
+					>
 						Save
 					</Button>
-					<Button className='ml-2' variant='danger'>
+					<Button
+						className='ml-2'
+						variant='danger'
+						onClick={deleteHandler}
+					>
 						Delete
 					</Button>
 				</Container>
@@ -46,7 +93,7 @@ const EditRecipe = (props) => {
 								groupName={'name'}
 								label={'Name:'}
 								formType={'text'}
-								initialValue={props.newRecipe.name}
+								value={props.newRecipe.name}
 								changeHandler={(event) =>
 									props.setRecipeField(
 										'name',
@@ -58,7 +105,7 @@ const EditRecipe = (props) => {
 								groupName={'shortDescription'}
 								label={'Description:'}
 								formType={'textArea'}
-								initialValue={props.newRecipe.shortDescription}
+								value={props.newRecipe.shortDescription}
 								changeHandler={(event) =>
 									props.setRecipeField(
 										'shortDescription',
@@ -70,7 +117,7 @@ const EditRecipe = (props) => {
 								groupName={'prepTime'}
 								label={'Preparation Time:'}
 								formType={'text'}
-								initialValue={props.newRecipe.prepTime}
+								value={props.newRecipe.prepTime}
 								changeHandler={(event) =>
 									props.setRecipeField(
 										'prepTime',
@@ -89,7 +136,7 @@ const EditRecipe = (props) => {
 									groupName={'prepSteps'}
 									label={false}
 									formType={'textarea'}
-									initialValue={step}
+									value={step}
 									changeHandler={(event) =>
 										props.setRecipeField(
 											'prepSteps',
@@ -100,7 +147,7 @@ const EditRecipe = (props) => {
 								/>
 							))}
 							<Button
-								className='ml-2'
+								className='ml-2 mb-3'
 								variant='outline-primary'
 								onClick={() => props.addItem('prepSteps')}
 							>
@@ -180,6 +227,13 @@ const EditRecipe = (props) => {
 										)
 									)}
 								</Form.Group>
+								<Button
+									className='ml-2'
+									variant='outline-primary'
+									onClick={() => props.addItem('ingredients')}
+								>
+									Add
+								</Button>
 							</Form>
 						</Container>
 					</Col>
@@ -191,8 +245,6 @@ const EditRecipe = (props) => {
 
 const mapStateToProps = (state) => {
 	return {
-		selectedRecipe: state.recipeState.selectedRecipe,
-		recipeDetails: state.recipeState.recipeDetails,
 		newRecipe: state.recipeState.newRecipe,
 		token: state.authState.token,
 		shouldEditRecipe: state.recipeState.shouldEditRecipe,
@@ -201,10 +253,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		setRecipeDetails: (recipe) =>
-			dispatch({ type: recipeActions.SET_RECIPE_DETAILS, recipe }),
-		setRecipe: (recipe) =>
-			dispatch({ type: recipeActions.SET_SELECTED_RECIPE, recipe }),
 		setShouldEditRecipe: (isEdit) =>
 			dispatch({
 				type: recipeActions.SET_IS_RECIPE_EDITION,
