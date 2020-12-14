@@ -24,6 +24,7 @@ const ViewRecipe = (props) => {
 	useEffect(() => {
 		setIsLoading(true);
 		if (token) {
+			console.log(`uef`);
 			axios
 				.get(`/api/v1/recipes/${recipeId}`, {
 					headers: {
@@ -32,17 +33,18 @@ const ViewRecipe = (props) => {
 				})
 				.then(function (response) {
 					setFullRecipe(response.data.data.data);
+					setIsLoading(false);
 				})
 				.catch(function (error) {
 					setFullRecipe(null);
 					alert(error);
+					setIsLoading(false);
 				});
 		}
-		setIsLoading(false);
 	}, [token, selectedRecipe, setFullRecipe, recipeId]);
 
 	let content;
-	if (isLoading || !selectedRecipe || !recipeDetails) {
+	if (isLoading || !recipeId) {
 		content = (
 			<Container
 				fluid
@@ -60,7 +62,13 @@ const ViewRecipe = (props) => {
 							<RecipeCard recipe={recipeDetails} />
 						</Col>
 						<Col>
-							<Button className='my-2' variant='outline-primary'>
+							<Button
+								className='my-2'
+								variant='outline-primary'
+								onClick={() =>
+									history.push(`/editRecipe/${recipeId}`)
+								}
+							>
 								Edit
 							</Button>
 							<h4>Ingredients</h4>

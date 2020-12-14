@@ -34,7 +34,7 @@ function App(props) {
 							<Switch>
 								<Route path='/home' component={Home} />
 								<Route
-									path='/createRecipe'
+									path='/editRecipe'
 									component={CreateRecipe}
 								/>
 								<Route

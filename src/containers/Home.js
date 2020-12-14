@@ -30,10 +30,10 @@ function Home(props) {
 		setRecipeDetails,
 	]);
 
-	useEffect(() => {
-		setSelectedRecipe(null);
-		setRecDetails(null);
-	}, [setSelectedRecipe, setRecDetails]);
+	// useEffect(() => {
+	// 	setSelectedRecipe(null);
+	// 	setRecDetails(null);
+	// }, [setSelectedRecipe, setRecDetails]);
 
 	const onSuccess = (res) => {
 		setRecipes(res.data.data.data);

@@ -63,7 +63,7 @@ function NavigationBar(props) {
 										<Nav.Link
 											onClick={(event) => {
 												props.history.push(
-													'/CreateRecipe'
+													'/editRecipe'
 												);
 											}}
 										>

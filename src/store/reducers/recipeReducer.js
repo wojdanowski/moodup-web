@@ -14,10 +14,11 @@ const authReducer = (state = initialState, action) => {
 			};
 		}
 		case actionTypes.SET_RECIPE_DETAILS: {
-			if (action.recipe) {
-			} else {
-				localStorage.removeItem('selectedRecipe');
-			}
+			// if (action.recipe) {
+			// 	localStorage.addItem('selectedRecipe', action.recipe);
+			// } else {
+			// 	localStorage.removeItem('selectedRecipe');
+			// }
 			return {
 				...state,
 				recipeDetails: action.recipe,
