@@ -19,6 +19,21 @@ const EditRecipe = (props) => {
 	return (
 		<React.Fragment>
 			<Container fluid className='mt-4'>
+				<Container className='d-flex justify-content-end'>
+					<Button
+						className='ml-2'
+						variant='outline-primary'
+						onClick={() => history.goBack()}
+					>
+						Go Back
+					</Button>
+					<Button className='ml-2' variant='outline-success'>
+						Save
+					</Button>
+					<Button className='ml-2' variant='danger'>
+						Delete
+					</Button>
+				</Container>
 				<Row xs={1} sm={1} md={1} lg={2}>
 					<Col lg={6}>
 						<h4>
@@ -94,27 +109,80 @@ const EditRecipe = (props) => {
 						</Form>
 					</Col>
 
-					{/* <Col>
-						<Container fluid className='d-flex justify-content-end'>
-							<Button className='ml-2' variant='outline-success'>
-								Save
-							</Button>
-							<Button className='ml-2' variant='outline-danger'>
-								Delete
-							</Button>
+					<Col>
+						<Container>
+							<h4 className='my-3'>Ingredients</h4>
+
+							<Form>
+								<Form.Group
+									controlId={`ingredientForm.quantity`}
+								>
+									<Row className='mb-2'>
+										<Col lg='3' md='3' sm='2' xs='3'>
+											Quantity:
+										</Col>
+										<Col lg='3' md='3' sm='2' xs='3'>
+											Name:
+										</Col>
+									</Row>
+									{props.newRecipe.ingredients.map(
+										(ingredient, index) => (
+											<React.Fragment key={index}>
+												<Row>
+													<span className='d-flex flex-row mb-1'>
+														<Col
+															className='px-1'
+															lg='3'
+															md='3'
+															sm='2'
+															xs='3'
+														>
+															<Form.Control
+																type='text'
+																defaultValue={
+																	ingredient.quantity
+																}
+																onChange={
+																	props.changeHandler
+																}
+															/>
+														</Col>
+														<Col>
+															<Form.Control
+																className='ml-1'
+																type='text'
+																defaultValue={
+																	ingredient.name
+																}
+																onChange={
+																	props.changeHandler
+																}
+															/>
+														</Col>
+														<Col>
+															<Button
+																variant='outline-danger'
+																onClick={(
+																	event
+																) =>
+																	props.remItem(
+																		'ingredients',
+																		index
+																	)
+																}
+															>
+																Remove
+															</Button>
+														</Col>
+													</span>
+												</Row>
+											</React.Fragment>
+										)
+									)}
+								</Form.Group>
+							</Form>
 						</Container>
-						<h4>Ingredients</h4>
-						<Row className='mt-1' xs={2} sm={2} md={2} lg={2}>
-							{props.recipeDetails.ingredients.map(
-								(ingredient, index) => (
-									<React.Fragment key={index}>
-										<Col>{ingredient.quantity}</Col>
-										<Col>{ingredient.name}</Col>
-									</React.Fragment>
-								)
-							)}
-						</Row>
-					</Col> */}
+					</Col>
 				</Row>
 			</Container>
 		</React.Fragment>
