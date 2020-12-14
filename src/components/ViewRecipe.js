@@ -21,10 +21,14 @@ const ViewRecipe = (props) => {
 
 	const recipeId = location.pathname.split('/viewRecipe/')[1];
 
+	const recipeEditHandler = () => {
+		props.setShouldEditRecipe(true);
+		history.push(`/editRecipe/${recipeId}`);
+	};
+
 	useEffect(() => {
 		setIsLoading(true);
 		if (token) {
-			console.log(`uef`);
 			axios
 				.get(`/api/v1/recipes/${recipeId}`, {
 					headers: {
@@ -65,9 +69,7 @@ const ViewRecipe = (props) => {
 							<Button
 								className='my-2'
 								variant='outline-primary'
-								onClick={() =>
-									history.push(`/editRecipe/${recipeId}`)
-								}
+								onClick={recipeEditHandler}
 							>
 								Edit
 							</Button>
@@ -115,6 +117,11 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({ type: recipeActions.SET_RECIPE_DETAILS, recipe }),
 		setRecipe: (recipe) =>
 			dispatch({ type: recipeActions.SET_SELECTED_RECIPE, recipe }),
+		setShouldEditRecipe: (isEdit) =>
+			dispatch({
+				type: recipeActions.SET_IS_RECIPE_EDITION,
+				isEdit,
+			}),
 	};
 };
 

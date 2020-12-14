@@ -3,6 +3,14 @@ import * as actionTypes from './../actions/recipeActions';
 const initialState = {
 	selectedRecipe: null,
 	recipeDetails: null,
+	shouldEditRecipe: false,
+	newRecipe: {
+		recipeName: '',
+		shortDescription: '',
+		prepTime: '',
+		ingredients: [],
+		author: '',
+	},
 };
 
 const authReducer = (state = initialState, action) => {
@@ -14,55 +22,29 @@ const authReducer = (state = initialState, action) => {
 			};
 		}
 		case actionTypes.SET_RECIPE_DETAILS: {
-			// if (action.recipe) {
-			// 	localStorage.addItem('selectedRecipe', action.recipe);
-			// } else {
-			// 	localStorage.removeItem('selectedRecipe');
-			// }
 			return {
 				...state,
 				recipeDetails: action.recipe,
 			};
 		}
-		// case actionTypes.SET_USER_DATA: {
-		// 	if (!action.token || !action.userId) {
-		// 		localStorage.removeItem('token');
-		// 		localStorage.removeItem('userId');
-		// 	} else {
-		// 		localStorage.setItem('token', action.token);
-		// 		localStorage.setItem('userId', action.userId);
-		// 	}
+		case actionTypes.SET_IS_RECIPE_EDITION: {
+			return {
+				...state,
+				shouldEditRecipe: action.isEdit,
+				newRecipe: {
+					...state.recipeDetails,
+					ingredients: [...state.recipeDetails.ingredients],
+					prepSteps: [...state.recipeDetails.prepSteps],
+				},
+			};
+		}
+		case actionTypes.SET_NEW_RECIPE_FIELD: {
+			return {
+				...state,
+				[action.field]: action.value,
+			};
+		}
 
-		// 	return {
-		// 		...state,
-		// 		userId: action.userId,
-		// 		token: action.token,
-		// 	};
-		// }
-		// case actionTypes.LOAD_USER_DATA_FROM_STORAGE: {
-		// 	const tokenInStorage = localStorage.getItem('token');
-
-		// 	const userIdInStorage = localStorage.getItem('userId');
-		// 	let newState = {
-		// 		...state,
-		// 	};
-		// 	if (tokenInStorage && userIdInStorage) {
-		// 		newState = {
-		// 			...state,
-		// 			token: tokenInStorage,
-		// 			userId: userIdInStorage,
-		// 		};
-		// 	} else
-		// 		newState = {
-		// 			...state,
-		// 			token: null,
-		// 			userId: null,
-		// 		};
-
-		// 	return {
-		// 		...newState,
-		// 	};
-		// }
 		default:
 			return state;
 	}
