@@ -14,7 +14,10 @@ const authReducer = (state = initialState, action) => {
 			};
 		}
 		case actionTypes.SET_RECIPE_DETAILS: {
-			localStorage.setItem('selectedRecipe', action.recipe.id);
+			if (action.recipe) {
+			} else {
+				localStorage.removeItem('selectedRecipe');
+			}
 			return {
 				...state,
 				recipeDetails: action.recipe,
