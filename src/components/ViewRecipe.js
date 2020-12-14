@@ -15,9 +15,7 @@ const ViewRecipe = (props) => {
 	const { token, selectedRecipe, recipeDetails, setRecipeDetails } = props;
 	const location = useLocation();
 	const history = useHistory();
-	const setFullRecipe = useCallback((recipe) => setRecipeDetails(recipe), [
-		setRecipeDetails,
-	]);
+	const setFullRecipe = useCallback((recipe) => setRecipeDetails(recipe), [setRecipeDetails]);
 
 	const recipeId = location.pathname.split('/viewRecipe/')[1];
 
@@ -50,10 +48,7 @@ const ViewRecipe = (props) => {
 	let content;
 	if (isLoading || !recipeId) {
 		content = (
-			<Container
-				fluid
-				className='d-flex min-vh-100 justify-content-center align-items-center'
-			>
+			<Container fluid className='d-flex min-vh-100 justify-content-center align-items-center'>
 				<Loader />
 			</Container>
 		);
@@ -66,23 +61,17 @@ const ViewRecipe = (props) => {
 							<RecipeCard recipe={recipeDetails} />
 						</Col>
 						<Col>
-							<Button
-								className='my-2'
-								variant='outline-primary'
-								onClick={recipeEditHandler}
-							>
+							<Button className='my-2' variant='outline-primary' onClick={recipeEditHandler}>
 								Edit
 							</Button>
 							<h4>Ingredients</h4>
 							<Row className='mt-1' xs={2} sm={2} md={2} lg={2}>
-								{recipeDetails.ingredients.map(
-									(ingredient, index) => (
-										<React.Fragment key={index}>
-											<Col>{ingredient.quantity}</Col>
-											<Col>{ingredient.name}</Col>
-										</React.Fragment>
-									)
-								)}
+								{recipeDetails.ingredients.map((ingredient, index) => (
+									<React.Fragment key={index}>
+										<Col>{ingredient.quantity}</Col>
+										<Col>{ingredient.name}</Col>
+									</React.Fragment>
+								))}
 							</Row>
 						</Col>
 					</Row>
@@ -113,10 +102,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		setRecipeDetails: (recipe) =>
-			dispatch({ type: recipeActions.SET_RECIPE_DETAILS, recipe }),
-		setRecipe: (recipe) =>
-			dispatch({ type: recipeActions.SET_SELECTED_RECIPE, recipe }),
+		setRecipeDetails: (recipe) => dispatch({ type: recipeActions.SET_RECIPE_DETAILS, recipe }),
+		setRecipe: (recipe) => dispatch({ type: recipeActions.SET_SELECTED_RECIPE, recipe }),
 		setShouldEditRecipe: (isEdit) =>
 			dispatch({
 				type: recipeActions.SET_IS_RECIPE_EDITION,
