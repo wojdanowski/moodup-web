@@ -50,7 +50,7 @@ const EditRecipe = (props) => {
 
 	const saveHandler = async () => {
 		setIsLoading(true);
-		const url = 'http://127.0.0.1:8000/api/v1/images/upload-image';
+		const url = '/api/v1/images/upload-image';
 		let data = new FormData();
 		data.append('image', props.imageToUpload);
 
