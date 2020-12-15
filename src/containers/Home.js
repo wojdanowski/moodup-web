@@ -20,7 +20,7 @@ function Home(props) {
 	const [shouldFetch, setShouldFetch] = useState(true);
 	const [recipes, setRecipes] = useState(null);
 	const [isLoading, setIsLoading] = useState(false);
-	const { token, setRecipe, setRecipeDetails } = props;
+	const { token, setRecipe } = props;
 	const history = useHistory();
 
 	const setSelectedRecipe = useCallback((recipe) => setRecipe(recipe), [setRecipe]);
