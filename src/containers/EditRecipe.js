@@ -36,7 +36,7 @@ const EditRecipe = (props) => {
 	}, [recipeId, setShouldEditRecipe]);
 
 	const onFail = (error) => {
-		alert(error);
+		alert(error.response.data.message);
 		console.log(error);
 		setIsLoading(false);
 	};
@@ -47,6 +47,29 @@ const EditRecipe = (props) => {
 	};
 
 	const saveHandler = async () => {
+		let imageUrl = !props.imageToUpload && props.recipeDetails ? props.recipeDetails.image : props.imageToUpload;
+		let filteredPrepSteps = props.newRecipe.prepSteps.filter((el) => el);
+		let filteredIngredients = props.newRecipe.ingredients.filter((el) => el.name);
+		filteredPrepSteps = filteredPrepSteps ? filteredPrepSteps : [];
+		filteredIngredients = filteredIngredients ? filteredIngredients : [];
+
+		if (!props.imageToUpload && props.recipeDetails) {
+			imageUrl = props.recipeDetails.image;
+		}
+
+		if (
+			!imageUrl ||
+			!props.newRecipe.name ||
+			!props.newRecipe.shortDescription ||
+			!props.newRecipe.prepTime ||
+			!filteredIngredients.length ||
+			!filteredPrepSteps.length
+		) {
+			alert('Invalid form');
+			setIsLoading(false);
+			return;
+		}
+
 		setIsLoading(true);
 		const url = '/api/v1/images/upload-image';
 		let data = new FormData();
@@ -59,8 +82,6 @@ const EditRecipe = (props) => {
 			},
 		};
 
-		let imageUrl = !props.imageToUpload && props.recipeDetails ? props.recipeDetails.image : null;
-
 		if (props.imageToUpload) {
 			await axios
 				.post(url, data, config)
@@ -68,17 +89,11 @@ const EditRecipe = (props) => {
 					imageUrl = response.data.imageUrl;
 				})
 				.catch(function (error) {
-					console.log(error);
+					onFail(error);
+					return;
 				});
 		}
 
-		if (!imageUrl) {
-			onFail('Image upload failed');
-			return;
-		}
-
-		const filteredPrepSteps = props.newRecipe.prepSteps.filter((el) => el);
-		const filteredIngredients = props.newRecipe.ingredients.filter((el) => el.name);
 		axios({
 			method: `${recipeId ? 'patch' : 'post'}`,
 			url: `/api/v1/recipes/${recipeId ? recipeId : ''}`,
