@@ -5,3 +5,4 @@ export const SET_NEW_RECIPE_FIELD = 'SET_NEW_RECIPE_FIELD';
 export const ADD_ITEM = 'ADD_PREP_STEP';
 export const REMOVE_ITEM = 'REMOVE_ITEM';
 export const SET_IMAGE_TO_UPLOAD = 'SET_IMAGE_TO_UPLOAD';
+export const RESET_RECIPE_STATE = 'RESET_RECIPES';
