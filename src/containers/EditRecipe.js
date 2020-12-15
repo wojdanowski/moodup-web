@@ -19,16 +19,14 @@ const EditRecipe = (props) => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const { setShouldEditRecipe } = props;
-	const { setRecipeImage, imageToUpload } = props;
+	const { setRecipeImage, resetRecipeState } = props;
 
 	useEffect(
 		() => () => {
-			// Make sure to revoke the data uris to avoid memory leaks
-			if (imageToUpload) {
-				setRecipeImage(null);
-			}
+			setRecipeImage(null);
+			resetRecipeState(null);
 		},
-		[setRecipeImage, imageToUpload]
+		[setRecipeImage, resetRecipeState]
 	);
 
 	useEffect(() => {
@@ -62,12 +60,11 @@ const EditRecipe = (props) => {
 		};
 
 		let imageUrl = !props.imageToUpload && props.recipeDetails ? props.recipeDetails.image : null;
-		console.log(props.imageToUpload);
+
 		if (props.imageToUpload) {
 			await axios
 				.post(url, data, config)
 				.then(function (response) {
-					console.log(response);
 					imageUrl = response.data.imageUrl;
 				})
 				.catch(function (error) {
@@ -99,7 +96,8 @@ const EditRecipe = (props) => {
 				onSuccess();
 			})
 			.catch(function (error) {
-				onFail();
+				console.log(error);
+				onFail(error);
 			});
 	};
 
@@ -311,6 +309,11 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({
 				type: recipeActions.SET_IMAGE_TO_UPLOAD,
 				image,
+			}),
+		resetRecipeState: (recipe) =>
+			dispatch({
+				type: recipeActions.RESET_RECIPE_STATE,
+				recipe,
 			}),
 	};
 };

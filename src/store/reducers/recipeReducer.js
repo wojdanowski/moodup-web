@@ -27,6 +27,13 @@ const authReducer = (state = initialState, action) => {
 				recipeDetails: action.recipe,
 			};
 		}
+		case actionTypes.RESET_RECIPE_STATE: {
+			return {
+				...state,
+				recipeDetails: null,
+				newRecipe: { ...initialState.newRecipe },
+			};
+		}
 		case actionTypes.SET_IS_RECIPE_EDITION: {
 			const copiedRecipe = action.isEdit
 				? {
