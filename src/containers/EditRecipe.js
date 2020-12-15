@@ -10,6 +10,7 @@ import Loader from './../components/uiElements/Loader';
 import { useLocation, useHistory } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import RecipeFormGroup from './../components/uiElements/RecipeFormGroup';
+import DropZone from './../components/DropZone';
 
 const EditRecipe = (props) => {
 	const location = useLocation();
@@ -18,6 +19,17 @@ const EditRecipe = (props) => {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const { setShouldEditRecipe } = props;
+	const { setRecipeImage, imageToUpload } = props;
+
+	useEffect(
+		() => () => {
+			// Make sure to revoke the data uris to avoid memory leaks
+			if (imageToUpload) {
+				setRecipeImage(null);
+			}
+		},
+		[setRecipeImage, imageToUpload]
+	);
 
 	useEffect(() => {
 		if (!recipeId) {
@@ -26,7 +38,7 @@ const EditRecipe = (props) => {
 	}, [recipeId, setShouldEditRecipe]);
 
 	const onFail = (error) => {
-		alert('Error');
+		alert(error);
 		console.log(error);
 		setIsLoading(false);
 	};
@@ -36,8 +48,38 @@ const EditRecipe = (props) => {
 		history.push('/home');
 	};
 
-	const saveHandler = () => {
+	const saveHandler = async () => {
 		setIsLoading(true);
+		const url = 'http://127.0.0.1:8000/api/v1/images/upload-image';
+		let data = new FormData();
+		data.append('image', props.imageToUpload);
+
+		let config = {
+			headers: {
+				Authorization: `Bearer ${props.token}`,
+				'Content-Type': 'multipart/form-data',
+			},
+		};
+
+		let imageUrl = !props.imageToUpload && props.recipeDetails ? props.recipeDetails.image : null;
+		console.log(props.imageToUpload);
+		if (props.imageToUpload) {
+			await axios
+				.post(url, data, config)
+				.then(function (response) {
+					console.log(response);
+					imageUrl = response.data.imageUrl;
+				})
+				.catch(function (error) {
+					console.log(error);
+				});
+		}
+
+		if (!imageUrl) {
+			onFail('Image upload failed');
+			return;
+		}
+
 		const filteredPrepSteps = props.newRecipe.prepSteps.filter((el) => el);
 		const filteredIngredients = props.newRecipe.ingredients.filter((el) => el.name);
 		axios({
@@ -50,6 +92,7 @@ const EditRecipe = (props) => {
 				...props.newRecipe,
 				prepSteps: [...filteredPrepSteps],
 				ingredients: [...filteredIngredients],
+				image: imageUrl,
 			},
 		})
 			.then(function (response) {
@@ -149,8 +192,9 @@ const EditRecipe = (props) => {
 
 					<Col>
 						<Container>
+							<h4 className='my-3'>Upload Files</h4>
+							<DropZone />
 							<h4 className='my-3'>Ingredients</h4>
-
 							<Form>
 								<Form.Group controlId={`ingredientForm.quantity`}>
 									<Row className='mb-2'>
@@ -230,9 +274,11 @@ const EditRecipe = (props) => {
 const mapStateToProps = (state) => {
 	return {
 		newRecipe: state.recipeState.newRecipe,
+		recipeDetails: state.recipeState.recipeDetails,
 		token: state.authState.token,
 		shouldEditRecipe: state.recipeState.shouldEditRecipe,
 		selectedRecipe: state.recipeState.selectedRecipe,
+		imageToUpload: state.recipeState.imageToUpload,
 	};
 };
 
@@ -260,6 +306,11 @@ const mapDispatchToProps = (dispatch) => {
 			dispatch({
 				type: recipeActions.ADD_ITEM,
 				field,
+			}),
+		setRecipeImage: (image) =>
+			dispatch({
+				type: recipeActions.SET_IMAGE_TO_UPLOAD,
+				image,
 			}),
 	};
 };

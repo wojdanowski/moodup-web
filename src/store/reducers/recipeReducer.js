@@ -50,10 +50,7 @@ const authReducer = (state = initialState, action) => {
 			};
 		}
 		case actionTypes.SET_NEW_RECIPE_FIELD: {
-			if (
-				action.field !== 'prepSteps' &&
-				action.field !== 'ingredients'
-			) {
+			if (action.field !== 'prepSteps' && action.field !== 'ingredients') {
 				return {
 					...state,
 					newRecipe: {
@@ -83,10 +80,7 @@ const authReducer = (state = initialState, action) => {
 		}
 		case actionTypes.REMOVE_ITEM: {
 			console.log(`rem item`);
-			if (
-				action.field !== 'prepSteps' &&
-				action.field !== 'ingredients'
-			) {
+			if (action.field !== 'prepSteps' && action.field !== 'ingredients') {
 				return {
 					...state,
 				};
@@ -105,10 +99,7 @@ const authReducer = (state = initialState, action) => {
 		}
 		case actionTypes.ADD_ITEM: {
 			let entry;
-			if (
-				action.field !== 'prepSteps' &&
-				action.field !== 'ingredients'
-			) {
+			if (action.field !== 'prepSteps' && action.field !== 'ingredients') {
 				return {
 					...state,
 				};
@@ -125,6 +116,15 @@ const authReducer = (state = initialState, action) => {
 					...state.newRecipe,
 					[action.field]: [...fieldArray],
 				},
+			};
+		}
+		case actionTypes.SET_IMAGE_TO_UPLOAD: {
+			return {
+				...state,
+				newRecipe: {
+					...state.newRecipe,
+				},
+				imageToUpload: action.image,
 			};
 		}
 

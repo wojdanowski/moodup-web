@@ -2,7 +2,7 @@ $theme-colors: (
 	'primary': #ffb800,
 	'secondary': #b55a00,
 	'basicWhite': white,
-	'basicGrey': rgb(161, 161, 161),
+	'basicGrey': rgb(201, 201, 201),
 );
 $border-radius: 0.5rem;
 
@@ -17,7 +17,8 @@ $border-radius: 0.5rem;
 	background: linear-gradient(
 		0deg,
 		rgba(0, 0, 0, 1) 0%,
-		rgba(0, 0, 0, 0) 40%,
+		rgba(0, 0, 0, 0.4766281512605042) 24%,
+		rgba(0, 0, 0, 0) 51%,
 		rgba(0, 0, 0, 0) 100%
 	);
 	border-radius: $border-radius;

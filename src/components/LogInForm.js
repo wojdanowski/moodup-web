@@ -7,13 +7,8 @@ import Loader from './uiElements/Loader';
 function LogInForm(props) {
 	let form = (
 		<Form style={{ minWidth: '40vw' }} onSubmit={props.onFormSubmit}>
-			<Container
-				fluid
-				className='d-flex flex-row justify-content-between'
-			>
-				<h1 className='text-primary'>
-					{props.isSigningUp ? 'Sign in' : 'Login'}
-				</h1>
+			<Container fluid className='d-flex flex-row justify-content-between'>
+				<h1 className='text-primary'>{props.isSigningUp ? 'Sign in' : 'Login'}</h1>
 				<Button variant='outline-primary' onClick={props.onSigningUp}>
 					{props.isSigningUp ? 'LogIn' : 'Sign in'}
 				</Button>
@@ -41,18 +36,11 @@ function LogInForm(props) {
 					<Form.Control
 						type='password'
 						placeholder='Confirm Password'
-						onChange={(event) =>
-							props.onConfirmPasswordChanged(event)
-						}
+						onChange={(event) => props.onConfirmPasswordChanged(event)}
 					/>
 				</Form.Group>
 			)}
-			<Button
-				className='w-100'
-				variant='primary'
-				type='submit'
-				onClick={props.onFormSubmit}
-			>
+			<Button className='w-100' variant='primary' type='submit' onClick={props.onFormSubmit}>
 				Submit
 			</Button>
 		</Form>
@@ -62,11 +50,7 @@ function LogInForm(props) {
 		form = <Loader />;
 	}
 
-	return (
-		<Container className='d-flex min-vh-100 justify-content-center align-items-center'>
-			{form}
-		</Container>
-	);
+	return <Container className='d-flex min-vh-100 justify-content-center align-items-center'>{form}</Container>;
 }
 
 export default LogInForm;
